@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}{{ switch.nome_switch }} - Gestão de Rede{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ switch.nome_switch }}</h1>
+        <div>
+            <a href="{{ url_for('web.edit_switch', id=switch.id) }}" class="btn btn-warning btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-edit"></i>
+                </span>
+                <span class="text">Editar</span>
+            </a>
+            <a href="{{ url_for('web.switches') }}" class="btn btn-secondary btn-icon-split ml-2">
+                <span class="icon text-white-50">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span class="text">Voltar</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <!-- Card de Status -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Status e Identificação</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <span class="badge badge-{% if switch.status_funcionamento == 'Em produção' %}success{% else %}warning{% endif %} p-2" style="font-size: 1.1em;">
+                                {{ switch.status_funcionamento }}
+                            </span>
+                        </div>
+                        <h4 class="text-primary">{{ switch.id_ativo }}</h4>
+                        <p class="mb-1"><strong>{{ switch.fabricante }} {{ switch.modelo }}</strong></p>
+                        <p class="text-muted">{{ switch.tipo_switch }}</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="border-right">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Criticidade
+                                </div>
+                                <span class="badge badge-{% if switch.criticidade == 'Alta' %}danger{% elif switch.criticidade == 'Média' %}warning{% else %}secondary{% endif %}">
+                                    {{ switch.criticidade }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Ambiente
+                            </div>
+                            <div class="h6 mb-0 font-weight-bold text-gray-800">{{ switch.ambiente }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card de Localização -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Localização</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Unidade:</strong> {{ switch.unidade }}</p>
+                    <p><strong>Local:</strong> {{ switch.local_detalhado }}</p>
+                    <p><strong>Rack:</strong> {{ switch.rack or 'N/A' }}</p>
+                    <p><strong>Posição U:</strong> {{ switch.posicao_u or 'N/A' }}</p>
+                    <p><strong>Referência:</strong> {{ switch.ponto_referencia or 'N/A' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- Card de Informações Técnicas -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Informações Técnicas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Especificações</h6>
+                            <p><strong>Nº Série:</strong> {{ switch.numero_serie or 'N/A' }}</p>
+                            <p><strong>Stack ID:</strong> {{ switch.stack_id or 'N/A' }}</p>
+                            <p><strong>Backplane:</strong> {{ switch.capacidade_backplane or 'N/A' }}</p>
+                            <p><strong>PoE:</strong> {% if switch.suporta_poe %}Sim ({{ switch.qtd_ports_poe }} ports){% else %}Não{% endif %}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Portas</h6>
+                            <p><strong>UTP:</strong> {{ switch.ports_utp_usadas or 0 }}/{{ switch.qtd_ports_utp or 0 }}</p>
+                            <p><strong>Fibra:</strong> {{ switch.ports_fibra_usadas or 0 }}/{{ switch.qtd_ports_fibra or 0 }}</p>
+                            <p><strong>Uplink:</strong> {{ switch.uplink_principal or 'N/A' }}</p>
+                            <p><strong>Velocidade:</strong> {{ switch.velocidade_uplink or 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card de Configuração de Rede -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Configuração de Rede</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Endereçamento</h6>
+                            <p><strong>IP Gestão:</strong> <code>{{ switch.ip_gestao or 'N/A' }}</code></p>
+                            <p><strong>Máscara:</strong> {{ switch.mascara_gestao or 'N/A' }}</p>
+                            <p><strong>Gateway:</strong> {{ switch.gateway_gestao or 'N/A' }}</p>
+                            <p><strong>VLAN Gestão:</strong> {{ switch.vlan_gestao or 'N/A' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Configurações</h6>
+                            <p><strong>VLANs:</strong> {{ switch.vlans_configuradas or 'N/A' }}</p>
+                            <p><strong>Firmware:</strong> {{ switch.versao_so_firmware or 'N/A' }}</p>
+                            <p><strong>Método Gestão:</strong> {{ switch.metodo_gestao or 'N/A' }}</p>
+                            <p><strong>Último Backup:</strong> {{ switch.data_ultimo_backup.strftime('%d/%m/%Y') if switch.data_ultimo_backup else 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card de Informações Administrativas -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Informações Administrativas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Aquisição</h6>
+                            <p><strong>Fornecedor:</strong> {{ switch.fornecedor or 'N/A' }}</p>
+                            <p><strong>Nº NF:</strong> {{ switch.numero_nota_fiscal or 'N/A' }}</p>
+                            <p><strong>Data Aquisição:</strong> {{ switch.data_aquisicao.strftime('%d/%m/%Y') if switch.data_aquisicao else 'N/A' }}</p>
+                            <p><strong>Valor:</strong> {% if switch.valor_aquisicao %}R$ {{ "%.2f"|format(switch.valor_aquisicao) }}{% else %}N/A{% endif %}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Garantia e Suporte</h6>
+                            <p><strong>Garantia:</strong> 
+                                {% if switch.fim_garantia %}
+                                    {{ switch.fim_garantia.strftime('%d/%m/%Y') }}
+                                    {% set dias_restantes = (switch.fim_garantia - datetime.now().date()).days %}
+                                    <span class="badge badge-{% if dias_restantes > 30 %}success{% elif dias_restantes > 0 %}warning{% else %}danger{% endif %}">
+                                        {{ dias_restantes }} dias
+                                    </span>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </p>
+                            <p><strong>Contrato:</strong> {{ switch.contrato_suporte or 'N/A' }}</p>
+                            <p><strong>SLA:</strong> {{ switch.sla_fornecedor or 'N/A' }}</p>
+                            <p><strong>Responsável:</strong> {{ switch.responsavel_tecnico or 'N/A' }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if switch.observacoes %}
+                    <hr>
+                    <h6>Observações</h6>
+                    <p class="text-muted">{{ switch.observacoes }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

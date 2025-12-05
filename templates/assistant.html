@@ -1,0 +1,544 @@
+{% extends "base.html" %}
+
+{% block title %}Assistente IA - Network Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-robot text-primary me-2"></i>Assistente Inteligente
+        </h1>
+        <div>
+            <a href="{{ url_for('web.dashboard') }}" class="btn btn-secondary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span class="text">Voltar ao Dashboard</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Estatísticas Rápidas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Switches Cadastrados</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalSwitches">-</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-network-wired fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Switches Ativos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="activeSwitches">-</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Com Garantia Próxima</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="warrantySwitches">-</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-exclamation fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Sistema IA</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">✅ Ativo</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-brain fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Área de Consulta -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-comments me-2"></i>Assistente de Rede Inteligente
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <!-- Histórico de Conversa -->
+                    <div id="chatContainer" class="chat-container mb-4" style="height: 400px; overflow-y: auto; border: 1px solid #e3e6f0; border-radius: 0.35rem; padding: 1rem; background: #f8f9fc;">
+                        <div class="chat-message ai-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot text-primary"></i>
+                            </div>
+                            <div class="message-content">
+                                <strong>Assistente IA:</strong>
+                                <p>Olá! Sou seu assistente inteligente de rede. Posso ajudar você a:</p>
+                                <ul>
+                                    <li>🔍 <strong>Consultar switches</strong> por status, localização, fabricante</li>
+                                    <li>⚠️ <strong>Alertar sobre garantias</strong> próximas do vencimento</li>
+                                    <li>📊 <strong>Mostrar estatísticas</strong> da sua rede</li>
+                                    <li>🏢 <strong>Filtrar por unidades</strong> específicas</li>
+                                    <li>🔧 <strong>Identificar problemas</strong> e sugestões</li>
+                                </ul>
+                                <p><strong>Exemplos:</strong> "Mostre switches ativos", "Quais switches têm garantia próxima?", "Switches na sede"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input de Consulta -->
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control form-control-lg" id="aiQuestion" 
+                               placeholder="Digite sua pergunta sobre a rede... (Ex: Mostre switches ativos na sede)"
+                               aria-label="Pergunta para o assistente">
+                        <button class="btn btn-primary btn-lg" type="button" id="askButton">
+                            <i class="fas fa-paper-plane me-2"></i>Enviar
+                        </button>
+                    </div>
+
+                    <!-- Consultas Rápidas -->
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <button class="btn btn-outline-primary w-100 quick-question" data-question="Mostre todos os switches ativos">
+                                <i class="fas fa-play-circle me-2"></i>Switches Ativos
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <button class="btn btn-outline-warning w-100 quick-question" data-question="Quais switches têm garantia próxima do vencimento?">
+                                <i class="fas fa-calendar-check me-2"></i>Garantia Próxima
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <button class="btn btn-outline-info w-100 quick-question" data-question="Mostre switches localizados na sede">
+                                <i class="fas fa-building me-2"></i>Switches na Sede
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <button class="btn btn-outline-success w-100 quick-question" data-question="Qual o valor total em equipamentos?">
+                                <i class="fas fa-dollar-sign me-2"></i>Valor Total
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <button class="btn btn-outline-secondary w-100 quick-question" data-question="Mostre switches que estão em manutenção">
+                                <i class="fas fa-tools me-2"></i>Em Manutenção
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <button class="btn btn-outline-dark w-100 quick-question" data-question="Distribuição de switches por fabricante">
+                                <i class="fas fa-chart-pie me-2"></i>Por Fabricante
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel de Ações e Informações -->
+        <div class="col-lg-4">
+            <!-- Status do Sistema -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-info-circle me-2"></i>Status do Sistema
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="system-status">
+                        <div class="status-item mb-3">
+                            <i class="fas fa-database text-primary me-2"></i>
+                            <strong>Banco de Dados:</strong>
+                            <span class="badge bg-success float-end" id="dbStatus">Conectado</span>
+                        </div>
+                        <div class="status-item mb-3">
+                            <i class="fas fa-brain text-info me-2"></i>
+                            <strong>IA:</strong>
+                            <span class="badge bg-success float-end" id="aiStatus">Ativa</span>
+                        </div>
+                        <div class="status-item mb-3">
+                            <i class="fas fa-clock text-warning me-2"></i>
+                            <strong>Última Atualização:</strong>
+                            <small class="text-muted float-end" id="lastUpdate">-</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações Rápidas -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-warning text-dark">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-bolt me-2"></i>Ações Rápidas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('web.add_switch') }}" class="btn btn-primary btn-block">
+                            <i class="fas fa-plus me-2"></i>Novo Switch
+                        </a>
+                        <a href="{{ url_for('web.switches') }}" class="btn btn-success btn-block">
+                            <i class="fas fa-list me-2"></i>Listar Switches
+                        </a>
+                        <a href="{{ url_for('web.import_switches') }}" class="btn btn-info btn-block">
+                            <i class="fas fa-file-import me-2"></i>Importar Excel
+                        </a>
+                        <button class="btn btn-outline-secondary btn-block" id="clearChat">
+                            <i class="fas fa-broom me-2"></i>Limpar Conversa
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dicas do Assistente -->
+            <div class="card shadow">
+                <div class="card-header py-3 bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-lightbulb me-2"></i>Dicas do Assistente
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="tips">
+                        <div class="tip-item mb-2">
+                            <i class="fas fa-search text-primary me-2"></i>
+                            <small>Use palavras-chave como "ativos", "garantia", "sede"</small>
+                        </div>
+                        <div class="tip-item mb-2">
+                            <i class="fas fa-filter text-success me-2"></i>
+                            <small>Filtre por fabricante: "Cisco", "HP", "Aruba"</small>
+                        </div>
+                        <div class="tip-item mb-2">
+                            <i class="fas fa-chart-bar text-warning me-2"></i>
+                            <small>Peça estatísticas: "quantos switches", "valor total"</small>
+                        </div>
+                        <div class="tip-item">
+                            <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                            <small>Monitor alertas de garantia automaticamente</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="aiLoading" class="loading-overlay" style="display: none;">
+        <div class="loading-content text-center">
+            <div class="loading-spinner-large mb-3"></div>
+            <h5 class="text-white">Processando sua solicitação...</h5>
+            <p class="text-light">O assistente está analisando a base de dados</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.chat-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.chat-message {
+    display: flex;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.ai-message {
+    flex-direction: row;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 1rem;
+    flex-shrink: 0;
+}
+
+.ai-message .message-avatar {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+}
+
+.user-message .message-avatar {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.message-content {
+    flex: 1;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-left: 4px solid #dc3545;
+}
+
+.user-message .message-content {
+    border-left: none;
+    border-right: 4px solid #007bff;
+    text-align: right;
+}
+
+.loading-spinner-large {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(255,255,255,0.3);
+    border-top: 5px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.system-status .status-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.system-status .status-item:last-child {
+    border-bottom: none;
+}
+
+.tips .tip-item {
+    padding: 0.5rem 0;
+    border-left: 3px solid #17a2b8;
+    padding-left: 1rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar personalizada */
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border-radius: 4px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #c82333, #a71e2a);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatContainer = document.getElementById('chatContainer');
+    const aiQuestion = document.getElementById('aiQuestion');
+    const askButton = document.getElementById('askButton');
+    const aiLoading = document.getElementById('aiLoading');
+    const clearChatBtn = document.getElementById('clearChat');
+
+    // Carregar estatísticas iniciais
+    loadStatistics();
+    
+    // Função para adicionar mensagem ao chat
+    function addMessage(message, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${isUser ? 'user-message' : 'ai-message'}`;
+        
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas ${isUser ? 'fa-user' : 'fa-robot'}"></i>
+            </div>
+            <div class="message-content">
+                <strong>${isUser ? 'Você' : 'Assistente IA'}:</strong>
+                <div class="mt-2">${formatResponse(message)}</div>
+            </div>
+        `;
+        
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // Função para fazer consulta
+    function askQuestion(question) {
+        if (!question.trim()) return;
+        
+        // Adicionar mensagem do usuário
+        addMessage(question, true);
+        
+        // Limpar input
+        aiQuestion.value = '';
+        
+        // Mostrar loading
+        aiLoading.style.display = 'flex';
+        
+        // Fazer requisição para a API
+        fetch('/api/query', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ question: question })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Esconder loading
+            aiLoading.style.display = 'none';
+            
+            if (data.success) {
+                // Adicionar resposta do assistente
+                addMessage(data.response);
+                // Atualizar estatísticas
+                loadStatistics();
+            } else {
+                addMessage(`❌ Erro: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            aiLoading.style.display = 'none';
+            addMessage(`❌ Erro na conexão: ${error}`);
+        });
+    }
+    
+    // Formatar resposta (converter markdown para HTML)
+    function formatResponse(response) {
+        return response
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary">$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>')
+            .replace(/•/g, '•')
+            .replace(/✅/g, '<span class="text-success">✅</span>')
+            .replace(/❌/g, '<span class="text-danger">❌</span>')
+            .replace(/📊/g, '📊')
+            .replace(/🟢/g, '<span class="text-success">🟢</span>')
+            .replace(/⚠️/g, '<span class="text-warning">⚠️</span>')
+            .replace(/🏢/g, '🏢')
+            .replace(/📭/g, '📭')
+            .replace(/🎯/g, '🎯')
+            .replace(/💰/g, '💰')
+            .replace(/🔧/g, '🔧');
+    }
+    
+    // Carregar estatísticas
+    function loadStatistics() {
+        fetch('/api/switches/stats')
+            .then(response => response.json())
+            .then(data => {
+                if (data.total !== undefined) {
+                    document.getElementById('totalSwitches').textContent = data.total;
+                    document.getElementById('activeSwitches').textContent = data.ativos;
+                    document.getElementById('warrantySwitches').textContent = data.alta_criticidade;
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar estatísticas:', error);
+            });
+    }
+    
+    // Evento do botão de perguntar
+    askButton.addEventListener('click', function() {
+        askQuestion(aiQuestion.value);
+    });
+    
+    // Evento do Enter no input
+    aiQuestion.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            askQuestion(aiQuestion.value);
+        }
+    });
+    
+    // Eventos para consultas rápidas
+    document.querySelectorAll('.quick-question').forEach(button => {
+        button.addEventListener('click', function() {
+            const question = this.getAttribute('data-question');
+            askQuestion(question);
+        });
+    });
+    
+    // Limpar conversa
+    clearChatBtn.addEventListener('click', function() {
+        const messages = chatContainer.querySelectorAll('.chat-message');
+        messages.forEach((message, index) => {
+            if (index > 0) { // Manter a mensagem inicial
+                message.remove();
+            }
+        });
+    });
+    
+    // Focar no input ao carregar a página
+    aiQuestion.focus();
+    
+    // Atualizar status do sistema
+    document.getElementById('lastUpdate').textContent = new Date().toLocaleString('pt-BR');
+});
+</script>
+{% endblock %}

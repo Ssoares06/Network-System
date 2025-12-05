@@ -1,0 +1,472 @@
+/* Custom CSS para Network Management System - Design Sofisticado */
+
+:root {
+    --primary-color: #dc3545;
+    --primary-dark: #c82333;
+    --primary-light: #e4606d;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --gradient-primary: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    --gradient-secondary: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}
+
+/* Sidebar Sofisticada */
+.sidebar {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+    box-shadow: 3px 0 15px rgba(220, 53, 69, 0.1);
+    border-right: 1px solid rgba(220, 53, 69, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.sidebar .nav-link {
+    color: var(--dark-color);
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    margin: 0.25rem 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.sidebar .nav-link:hover::before,
+.sidebar .nav-link.active::before {
+    left: 0;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    color: white;
+    transform: translateX(8px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+    margin-right: 12px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar .nav-link:hover i,
+.sidebar .nav-link.active i {
+    transform: scale(1.1);
+}
+
+/* Content Area */
+.content-wrapper {
+    background: transparent;
+    min-height: 100vh;
+}
+
+/* Cards Sofisticados */
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    overflow: hidden;
+    position: relative;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Botões Sofisticados */
+.btn {
+    border-radius: 0.75rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
+
+/* Navbar Sofisticada */
+.navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(220, 53, 69, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: var(--primary-color) !important;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+/* Formulários Sofisticados */
+.form-control, .form-select {
+    border-radius: 0.75rem;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+    transform: translateY(-1px);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Tabelas Sofisticadas */
+.table {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+}
+
+.table th {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+}
+
+.table td {
+    padding: 1rem;
+    border-color: #f8f9fa;
+    vertical-align: middle;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(220, 53, 69, 0.02);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(220, 53, 69, 0.05);
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+/* Badges Sofisticados */
+.badge {
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Login Page Sofisticada */
+.login-container {
+    background: var(--gradient-primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: float 20s linear infinite;
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-50px, -50px) rotate(360deg); }
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 1.5rem;
+    box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.login-header {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.login-header::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.login-body {
+    padding: 3rem 2rem 2rem;
+}
+
+/* Logo Carousel */
+.logo-carousel {
+    height: 80px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.logo-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-slide.active {
+    opacity: 1;
+}
+
+.logo-slide img {
+    max-height: 60px;
+    max-width: 200px;
+    object-fit: contain;
+}
+
+/* Alertas Sofisticados */
+.alert {
+    border: none;
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+    border-left: 4px solid;
+}
+
+/* Paginação Sofisticada */
+.pagination .page-item .page-link {
+    border: none;
+    border-radius: 0.75rem;
+    margin: 0 0.25rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.pagination .page-item .page-link:hover {
+    background: rgba(220, 53, 69, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Nav Tabs Sofisticados */
+.nav-tabs {
+    border-bottom: 2px solid #e9ecef;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-radius: 0.75rem 0.75rem 0 0;
+    padding: 1rem 1.5rem;
+    color: var(--secondary-color);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-right: 0.5rem;
+}
+
+.nav-tabs .nav-link:hover {
+    border: none;
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.nav-tabs .nav-link.active {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 -4px 15px rgba(220, 53, 69, 0.3);
+}
+
+/* Loading Spinner Sofisticado */
+.loading-spinner {
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        z-index: 1000;
+        width: 280px;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .card {
+        margin: 0.5rem;
+    }
+}
+
+/* Animações */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Scrollbar Customizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gradient-primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}

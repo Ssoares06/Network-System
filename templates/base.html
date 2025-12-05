@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Network Management System{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+    
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <!-- Layout principal apenas para usuários logados -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h5 class="text-primary" style="color: var(--primary-color) !important;">
+                            <i class="fas fa-network-wired"></i> Network Management System
+                        </h5>
+                        <small class="text-muted">Interne Home Care LTDA</small>
+                    </div>
+                    
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'web.dashboard' %}active{% endif %}" 
+                               href="{{ url_for('web.dashboard') }}">
+                                <i class="fas fa-tachometer-alt mr-2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint in ['web.switches', 'web.add_switch', 'web.view_switch', 'web.edit_switch'] %}active{% endif %}" 
+                               href="{{ url_for('web.switches') }}">
+                                <i class="fas fa-network-wired mr-2"></i>
+                                Switches
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'web.data_dictionary' %}active{% endif %}" 
+                               href="{{ url_for('web.data_dictionary') }}">
+                                <i class="fas fa-book mr-2"></i>
+                                Dicionário de Dados
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'web.import_switches' %}active{% endif %}" 
+                               href="{{ url_for('web.import_switches') }}">
+                                <i class="fas fa-file-import mr-2"></i>
+                                Importar Excel
+                            </a>
+                        </li>
+                        {% if current_user.is_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'web.register' %}active{% endif %}" 
+                               href="{{ url_for('web.register') }}">
+                                <i class="fas fa-user-plus mr-2"></i>
+                                Novo Usuário
+                            </a>
+                        </li>
+
+                        <!-- No menu da sidebar, adicione este item: -->
+                        <li class="nav-item">
+                              <a class="nav-link {% if request.endpoint == 'web.assistant' %}active{% endif %}" 
+                                href="{{ url_for('web.assistant') }}">
+                                <i class="fas fa-robot mr-2"></i>
+                                Assistente IA
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    
+                    <hr>
+                    <div class="px-3">
+                        <small class="text-muted">Logado como:</small>
+                        <div class="fw-bold">{{ current_user.name }}</div>
+                        <a href="{{ url_for('web.logout') }}" class="btn btn-sm btn-outline-danger mt-2 w-100">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content-wrapper">
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-4">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#navbarSupportedContent">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <span class="navbar-text">
+                                        <i class="fas fa-calendar-day" style="color: var(--primary-color);"></i>
+                                        <span id="current-date"></span>
+                                    </span>
+                                </li>
+                            </ul>
+                            <div class="d-flex">
+                                <span class="navbar-text me-3">
+                                    <i class="fas fa-user" style="color: var(--primary-color);"></i>
+                                    {{ current_user.name }}
+                                    {% if current_user.is_admin %}
+                                    <span class="badge bg-danger ms-1">Admin</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Page Content -->
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    {% else %}
+    <!-- Redirecionar para login se não estiver autenticado -->
+    <script>
+        window.location.href = "{{ url_for('web.login') }}";
+    </script>
+    {% endif %}
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+
+    <script>
+    // Data atual no navbar
+    function updateCurrentDate() {
+        const now = new Date();
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        const dateElement = document.getElementById('current-date');
+        if (dateElement) {
+            dateElement.textContent = now.toLocaleDateString('pt-BR', options);
+        }
+    }
+    updateCurrentDate();
+    setInterval(updateCurrentDate, 60000);
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

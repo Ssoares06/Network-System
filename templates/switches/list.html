@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Switches - Gestão de Rede{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Switches</h1>
+        <div>
+            <a href="{{ url_for('web.add_switch') }}" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="text">Novo Switch</span>
+            </a>
+            <a href="{{ url_for('web.import_switches') }}" class="btn btn-success btn-icon-split ml-2">
+                <span class="icon text-white-50">
+                    <i class="fas fa-file-import"></i>
+                </span>
+                <span class="text">Importar Excel</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form method="get" class="form-inline">
+                <div class="form-group mr-3 mb-2">
+                    <input type="text" class="form-control" name="search" placeholder="Buscar..." 
+                           value="{{ request.args.get('search', '') }}">
+                </div>
+                <div class="form-group mr-3 mb-2">
+                    <select class="form-control" name="status">
+                        <option value="">Todos os Status</option>
+                        <option value="Em produção" {% if request.args.get('status') == 'Em produção' %}selected{% endif %}>Em produção</option>
+                        <option value="Inativo (Manutenção)" {% if request.args.get('status') == 'Inativo (Manutenção)' %}selected{% endif %}>Inativo</option>
+                    </select>
+                </div>
+                <div class="form-group mr-3 mb-2">
+                    <select class="form-control" name="criticidade">
+                        <option value="">Todas Criticidades</option>
+                        <option value="Alta" {% if request.args.get('criticidade') == 'Alta' %}selected{% endif %}>Alta</option>
+                        <option value="Média" {% if request.args.get('criticidade') == 'Média' %}selected{% endif %}>Média</option>
+                        <option value="Baixa" {% if request.args.get('criticidade') == 'Baixa' %}selected{% endif %}>Baixa</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">
+                    <i class="fas fa-search"></i> Filtrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Switches ({{ switches.total }})</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID Ativo</th>
+                            <th>Nome</th>
+                            <th>Status</th>
+                            <th>Criticidade</th>
+                            <th>Localização</th>
+                            <th>Fabricante</th>
+                            <th>IP Gestão</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for switch in switches.items %}
+                        <tr>
+                            <td>
+                                <strong>{{ switch.id_ativo }}</strong>
+                            </td>
+                            <td>{{ switch.nome_switch }}</td>
+                            <td>
+                                <span class="badge badge-{% if switch.status_funcionamento == 'Em produção' %}success{% else %}warning{% endif %}">
+                                    {{ switch.status_funcionamento }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge badge-{% if switch.criticidade == 'Alta' %}danger{% elif switch.criticidade == 'Média' %}warning{% else %}secondary{% endif %}">
+                                    {{ switch.criticidade }}
+                                </span>
+                            </td>
+                            <td>
+                                <small>{{ switch.unidade }}<br>{{ switch.local_detalhado }}</small>
+                            </td>
+                            <td>{{ switch.fabricante }}</td>
+                            <td>
+                                {% if switch.ip_gestao %}
+                                <code>{{ switch.ip_gestao }}</code>
+                                {% else %}
+                                <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ url_for('web.view_switch', id=switch.id) }}" 
+                                       class="btn btn-info" title="Visualizar">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('web.edit_switch', id=switch.id) }}" 
+                                       class="btn btn-warning" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-danger" title="Excluir" 
+                                            onclick="confirmDelete({{ switch.id }}, '{{ switch.nome_switch }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Paginação -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if switches.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('web.switches', page=switches.prev_num, search=request.args.get('search'), status=request.args.get('status'), criticidade=request.args.get('criticidade')) }}">Anterior</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for page_num in switches.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                        {% if page_num %}
+                            <li class="page-item {% if page_num == switches.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('web.switches', page=page_num, search=request.args.get('search'), status=request.args.get('status'), criticidade=request.args.get('criticidade')) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if switches.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('web.switches', page=switches.next_num, search=request.args.get('search'), status=request.args.get('status'), criticidade=request.args.get('criticidade')) }}">Próxima</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function confirmDelete(id, nome) {
+    if (confirm(`Tem certeza que deseja excluir o switch "${nome}"?`)) {
+        fetch(`/api/switches/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erro ao excluir switch: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Erro ao excluir switch: ' + error);
+        });
+    }
+}
+</script>
+{% endblock %}

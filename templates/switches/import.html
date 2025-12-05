@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Importar Switches - Gestão de Rede{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Importar Switches do Excel</h1>
+        <a href="{{ url_for('web.switches') }}" class="btn btn-secondary btn-icon-split">
+            <span class="icon text-white-50">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span class="text">Voltar</span>
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Importar Arquivo Excel</h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Instruções de Importação</h6>
+                        <ul class="mb-0">
+                            <li>O arquivo deve estar no formato Excel (.xlsx ou .xls)</li>
+                            <li>Use a planilha "Inventario Switches" como modelo</li>
+                            <li>Mantenha a estrutura de colunas original</li>
+                            <li>Campos obrigatórios: ID_Ativo, Nome_Switch, Status_Funcionamento</li>
+                        </ul>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="file">Selecione o arquivo Excel</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="file" name="file" accept=".xlsx,.xls" required>
+                                <label class="custom-file-label" for="file">Escolher arquivo...</label>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary btn-icon-split">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-file-import"></i>
+                                </span>
+                                <span class="text">Importar Switches</span>
+                            </button>
+                            <a href="{{ url_for('web.switches') }}" class="btn btn-secondary ml-2">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Modelo de Dados</h6>
+                </div>
+                <div class="card-body">
+                    <h6>Colunas Esperadas:</h6>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Coluna</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>A</td><td>ID_Ativo</td></tr>
+                                <tr><td>B</td><td>Nome_Switch</td></tr>
+                                <tr><td>C</td><td>Status_Funcionamento</td></tr>
+                                <tr><td>D</td><td>Criticidade</td></tr>
+                                <tr><td>E</td><td>Ambiente</td></tr>
+                                <tr><td>F</td><td>Unidade</td></tr>
+                                <tr><td>G</td><td>Local_Detalhado</td></tr>
+                                <tr><td>H</td><td>Rack</td></tr>
+                                <tr><td>I</td><td>Posição_U</td></tr>
+                                <tr><td>J</td><td>Ponto_Referencia</td></tr>
+                                <tr><td>K</td><td>Fabricante</td></tr>
+                                <tr><td>L</td><td>Modelo</td></tr>
+                                <tr><td>M</td><td>Nº_Série</td></tr>
+                                <tr><td>N</td><td>Tipo_Switch</td></tr>
+                                <tr><td>O</td><td>Stack_ID</td></tr>
+                                <tr><td>P</td><td>Qtd_Ports_UTP</td></tr>
+                                <tr><td>Q</td><td>Ports_UTP_Usadas</td></tr>
+                                <tr><td>R</td><td>Qtd_Ports_Fibra</td></tr>
+                                <tr><td>S</td><td>Ports_Fibra_Usadas</td></tr>
+                                <tr><td>T</td><td>Suporta_PoE</td></tr>
+                                <tr><td>U</td><td>Qtd_Ports_PoE</td></tr>
+                                <tr><td>V</td><td>Capacidade_Backplane</td></tr>
+                                <tr><td>W</td><td>IP_Gestão</td></tr>
+                                <tr><td>X</td><td>Máscara_Gestão</td></tr>
+                                <tr><td>Y</td><td>Gateway_Gestão</td></tr>
+                                <tr><td>Z</td><td>VLAN_Gestão</td></tr>
+                                <!-- Continua... -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Mostrar nome do arquivo selecionado
+document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+    var fileName = document.getElementById("file").files[0].name;
+    var nextSibling = e.target.nextElementSibling;
+    nextSibling.innerText = fileName;
+});
+</script>
+{% endblock %}

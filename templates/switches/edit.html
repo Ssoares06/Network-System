@@ -1,0 +1,682 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Switch - Network Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Editar Switch: {{ switch.nome_switch }}</h1>
+        <div>
+            <a href="{{ url_for('web.view_switch', id=switch.id) }}" class="btn btn-info btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-eye"></i>
+                </span>
+                <span class="text">Visualizar</span>
+            </a>
+            <a href="{{ url_for('web.switches') }}" class="btn btn-secondary btn-icon-split ml-2">
+                <span class="icon text-white-50">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span class="text">Voltar</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-white">Editar Informações do Switch</h6>
+        </div>
+        <div class="card-body">
+            <form method="POST" id="switchForm">
+                <!-- Abas -->
+                <ul class="nav nav-tabs" id="switchTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="identificacao-tab" data-bs-toggle="tab" href="#identificacao" role="tab">
+                            <i class="fas fa-id-card"></i> Identificação
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="localizacao-tab" data-bs-toggle="tab" href="#localizacao" role="tab">
+                            <i class="fas fa-map-marker-alt"></i> Localização
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tecnico-tab" data-bs-toggle="tab" href="#tecnico" role="tab">
+                            <i class="fas fa-cogs"></i> Dados Técnicos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="rede-tab" data-bs-toggle="tab" href="#rede" role="tab">
+                            <i class="fas fa-network-wired"></i> Rede
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="software-tab" data-bs-toggle="tab" href="#software" role="tab">
+                            <i class="fas fa-code"></i> Software & Segurança
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="administrativo-tab" data-bs-toggle="tab" href="#administrativo" role="tab">
+                            <i class="fas fa-file-invoice-dollar"></i> Administrativo
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="controle-tab" data-bs-toggle="tab" href="#controle" role="tab">
+                            <i class="fas fa-tasks"></i> Controle & Gestão
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-4" id="switchTabsContent">
+                    <!-- Aba Identificação -->
+                    <div class="tab-pane fade show active" id="identificacao" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="id_ativo" class="form-label">ID Ativo *</label>
+                                    <input type="text" class="form-control" id="id_ativo" name="id_ativo" 
+                                           required pattern="SW-\d{4}" title="Formato: SW-0001"
+                                           value="{{ switch.id_ativo }}">
+                                    <small class="form-text text-muted">Formato: SW-0001</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="nome_switch" class="form-label">Nome do Switch *</label>
+                                    <input type="text" class="form-control" id="nome_switch" name="nome_switch" 
+                                           required value="{{ switch.nome_switch }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="status_funcionamento" class="form-label">Status *</label>
+                                    <select class="form-control" id="status_funcionamento" name="status_funcionamento" required>
+                                        <option value="Em produção" {% if switch.status_funcionamento == 'Em produção' %}selected{% endif %}>Em produção</option>
+                                        <option value="Inativo (Manutenção)" {% if switch.status_funcionamento == 'Inativo (Manutenção)' %}selected{% endif %}>Inativo (Manutenção)</option>
+                                        <option value="Em teste" {% if switch.status_funcionamento == 'Em teste' %}selected{% endif %}>Em teste</option>
+                                        <option value="Desativado" {% if switch.status_funcionamento == 'Desativado' %}selected{% endif %}>Desativado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="criticidade" class="form-label">Criticidade *</label>
+                                    <select class="form-control" id="criticidade" name="criticidade" required>
+                                        <option value="Alta" {% if switch.criticidade == 'Alta' %}selected{% endif %}>Alta</option>
+                                        <option value="Média" {% if switch.criticidade == 'Média' %}selected{% endif %}>Média</option>
+                                        <option value="Baixa" {% if switch.criticidade == 'Baixa' %}selected{% endif %}>Baixa</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="ambiente" class="form-label">Ambiente *</label>
+                                    <select class="form-control" id="ambiente" name="ambiente" required>
+                                        <option value="Produção" {% if switch.ambiente == 'Produção' %}selected{% endif %}>Produção</option>
+                                        <option value="Teste" {% if switch.ambiente == 'Teste' %}selected{% endif %}>Teste</option>
+                                        <option value="Desenvolvimento" {% if switch.ambiente == 'Desenvolvimento' %}selected{% endif %}>Desenvolvimento</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba Localização -->
+                    <div class="tab-pane fade" id="localizacao" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="unidade" class="form-label">Unidade *</label>
+                                    <input type="text" class="form-control" id="unidade" name="unidade" 
+                                           required value="{{ switch.unidade }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="local_detalhado" class="form-label">Local Detalhado</label>
+                                    <input type="text" class="form-control" id="local_detalhado" name="local_detalhado"
+                                           value="{{ switch.local_detalhado or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="rack" class="form-label">Rack</label>
+                                    <input type="text" class="form-control" id="rack" name="rack"
+                                           value="{{ switch.rack or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="posicao_u" class="form-label">Posição U</label>
+                                    <input type="text" class="form-control" id="posicao_u" name="posicao_u"
+                                           value="{{ switch.posicao_u or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="ponto_referencia" class="form-label">Ponto de Referência</label>
+                                    <input type="text" class="form-control" id="ponto_referencia" name="ponto_referencia"
+                                           value="{{ switch.ponto_referencia or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba Dados Técnicos -->
+                    <div class="tab-pane fade" id="tecnico" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="fabricante" class="form-label">Fabricante *</label>
+                                    <select class="form-control" id="fabricante" name="fabricante" required onchange="toggleCustomFabricante()">
+                                        <option value="">Selecione...</option>
+                                        <option value="Cisco" {% if switch.fabricante == 'Cisco' %}selected{% endif %}>Cisco</option>
+                                        <option value="HP" {% if switch.fabricante == 'HP' %}selected{% endif %}>HP</option>
+                                        <option value="Aruba" {% if switch.fabricante == 'Aruba' %}selected{% endif %}>Aruba</option>
+                                        <option value="Dell" {% if switch.fabricante == 'Dell' %}selected{% endif %}>Dell</option>
+                                        <option value="Juniper" {% if switch.fabricante == 'Juniper' %}selected{% endif %}>Juniper</option>
+                                        <option value="Extreme Networks" {% if switch.fabricante == 'Extreme Networks' %}selected{% endif %}>Extreme Networks</option>
+                                        <option value="Brocade" {% if switch.fabricante == 'Brocade' %}selected{% endif %}>Brocade</option>
+                                        <option value="MikroTik" {% if switch.fabricante == 'MikroTik' %}selected{% endif %}>MikroTik</option>
+                                        <option value="Ubiquiti" {% if switch.fabricante == 'Ubiquiti' %}selected{% endif %}>Ubiquiti</option>
+                                        <option value="Outro" {% if switch.fabricante not in ['Cisco', 'HP', 'Aruba', 'Dell', 'Juniper', 'Extreme Networks', 'Brocade', 'MikroTik', 'Ubiquiti'] %}selected{% endif %}>Outro (especificar)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="modelo" class="form-label">Modelo *</label>
+                                    <input type="text" class="form-control" id="modelo" name="modelo" 
+                                           required value="{{ switch.modelo }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="customFabricante" class="row" style="display: {% if switch.fabricante not in ['Cisco', 'HP', 'Aruba', 'Dell', 'Juniper', 'Extreme Networks', 'Brocade', 'MikroTik', 'Ubiquiti'] %}block{% else %}none{% endif %};">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label for="fabricante_custom" class="form-label">Especificar Fabricante</label>
+                                    <input type="text" class="form-control" id="fabricante_custom" name="fabricante_custom"
+                                           value="{% if switch.fabricante not in ['Cisco', 'HP', 'Aruba', 'Dell', 'Juniper', 'Extreme Networks', 'Brocade', 'MikroTik', 'Ubiquiti'] %}{{ switch.fabricante }}{% endif %}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="numero_serie" class="form-label">Número de Série</label>
+                                    <input type="text" class="form-control" id="numero_serie" name="numero_serie"
+                                           value="{{ switch.numero_serie or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="tipo_switch" class="form-label">Tipo de Switch</label>
+                                    <select class="form-control" id="tipo_switch" name="tipo_switch">
+                                        <option value="Core" {% if switch.tipo_switch == 'Core' %}selected{% endif %}>Core</option>
+                                        <option value="Acesso" {% if switch.tipo_switch == 'Acesso' %}selected{% endif %}>Acesso</option>
+                                        <option value="Distribuição" {% if switch.tipo_switch == 'Distribuição' %}selected{% endif %}>Distribuição</option>
+                                        <option value="Aggregation" {% if switch.tipo_switch == 'Aggregation' %}selected{% endif %}>Aggregation</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="stack_id" class="form-label">Stack ID</label>
+                                    <input type="text" class="form-control" id="stack_id" name="stack_id"
+                                           value="{{ switch.stack_id or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="qtd_ports_utp" class="form-label">Portas UTP</label>
+                                    <input type="number" class="form-control" id="qtd_ports_utp" name="qtd_ports_utp" min="0"
+                                           value="{{ switch.qtd_ports_utp or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="ports_utp_usadas" class="form-label">UTP Usadas</label>
+                                    <input type="number" class="form-control" id="ports_utp_usadas" name="ports_utp_usadas" min="0"
+                                           value="{{ switch.ports_utp_usadas or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="qtd_ports_fibra" class="form-label">Portas Fibra</label>
+                                    <input type="number" class="form-control" id="qtd_ports_fibra" name="qtd_ports_fibra" min="0"
+                                           value="{{ switch.qtd_ports_fibra or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="ports_fibra_usadas" class="form-label">Fibra Usadas</label>
+                                    <input type="number" class="form-control" id="ports_fibra_usadas" name="ports_fibra_usadas" min="0"
+                                           value="{{ switch.ports_fibra_usadas or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="capacidade_backplane" class="form-label">Capacidade Backplane</label>
+                                    <input type="text" class="form-control" id="capacidade_backplane" name="capacidade_backplane" 
+                                           placeholder="Ex: 216 Gbps" value="{{ switch.capacidade_backplane or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="suporta_poe" name="suporta_poe"
+                                               {% if switch.suporta_poe %}checked{% endif %}>
+                                        <label class="form-check-label" for="suporta_poe">
+                                            Suporta PoE
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="qtd_ports_poe" class="form-label">Portas PoE</label>
+                                    <input type="number" class="form-control" id="qtd_ports_poe" name="qtd_ports_poe" min="0"
+                                           value="{{ switch.qtd_ports_poe or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba Rede -->
+                    <div class="tab-pane fade" id="rede" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="ip_gestao" class="form-label">IP Gestão</label>
+                                    <input type="text" class="form-control" id="ip_gestao" name="ip_gestao" 
+                                           pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$" title="Formato IPv4 válido"
+                                           value="{{ switch.ip_gestao or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="mascara_gestao" class="form-label">Máscara</label>
+                                    <input type="text" class="form-control" id="mascara_gestao" name="mascara_gestao"
+                                           value="{{ switch.mascara_gestao or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="gateway_gestao" class="form-label">Gateway</label>
+                                    <input type="text" class="form-control" id="gateway_gestao" name="gateway_gestao"
+                                           value="{{ switch.gateway_gestao or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="vlan_gestao" class="form-label">VLAN Gestão</label>
+                                    <input type="number" class="form-control" id="vlan_gestao" name="vlan_gestao" min="1" max="4096"
+                                           value="{{ switch.vlan_gestao or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="vlans_configuradas" class="form-label">VLANs Configuradas</label>
+                                    <input type="text" class="form-control" id="vlans_configuradas" name="vlans_configuradas" 
+                                           placeholder="Ex: 10,20,30,40" value="{{ switch.vlans_configuradas or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="uplink_principal" class="form-label">Uplink Principal</label>
+                                    <input type="text" class="form-control" id="uplink_principal" name="uplink_principal"
+                                           value="{{ switch.uplink_principal or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="velocidade_uplink" class="form-label">Velocidade Uplink</label>
+                                    <select class="form-control" id="velocidade_uplink" name="velocidade_uplink">
+                                        <option value="1 Gbps" {% if switch.velocidade_uplink == '1 Gbps' %}selected{% endif %}>1 Gbps</option>
+                                        <option value="10 Gbps" {% if switch.velocidade_uplink == '10 Gbps' %}selected{% endif %}>10 Gbps</option>
+                                        <option value="25 Gbps" {% if switch.velocidade_uplink == '25 Gbps' %}selected{% endif %}>25 Gbps</option>
+                                        <option value="40 Gbps" {% if switch.velocidade_uplink == '40 Gbps' %}selected{% endif %}>40 Gbps</option>
+                                        <option value="100 Gbps" {% if switch.velocidade_uplink == '100 Gbps' %}selected{% endif %}>100 Gbps</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba Software & Segurança -->
+                    <div class="tab-pane fade" id="software" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="versao_so_firmware" class="form-label">Versão SO/Firmware</label>
+                                    <input type="text" class="form-control" id="versao_so_firmware" name="versao_so_firmware"
+                                           value="{{ switch.versao_so_firmware or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="data_ultimo_upgrade" class="form-label">Data Último Upgrade</label>
+                                    <input type="date" class="form-control" id="data_ultimo_upgrade" name="data_ultimo_upgrade"
+                                           value="{{ switch.data_ultimo_upgrade.strftime('%Y-%m-%d') if switch.data_ultimo_upgrade else '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="backup_config" name="backup_config"
+                                               {% if switch.backup_config %}checked{% endif %}>
+                                        <label class="form-check-label" for="backup_config">
+                                            Backup de Configuração
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="data_ultimo_backup" class="form-label">Data Último Backup</label>
+                                    <input type="date" class="form-control" id="data_ultimo_backup" name="data_ultimo_backup"
+                                           value="{{ switch.data_ultimo_backup.strftime('%Y-%m-%d') if switch.data_ultimo_backup else '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="metodo_gestao" class="form-label">Método de Gestão</label>
+                                    <select class="form-control" id="metodo_gestao" name="metodo_gestao" multiple>
+                                        {% set metodos = switch.metodo_gestao.split('; ') if switch.metodo_gestao else [] %}
+                                        <option value="SSH" {% if 'SSH' in metodos %}selected{% endif %}>SSH</option>
+                                        <option value="HTTPS" {% if 'HTTPS' in metodos %}selected{% endif %}>HTTPS</option>
+                                        <option value="Console" {% if 'Console' in metodos %}selected{% endif %}>Console</option>
+                                        <option value="Telnet" {% if 'Telnet' in metodos %}selected{% endif %}>Telnet</option>
+                                        <option value="SNMP" {% if 'SNMP' in metodos %}selected{% endif %}>SNMP</option>
+                                    </select>
+                                    <small class="form-text text-muted">Segure Ctrl para selecionar múltiplos</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="acl_gestao_resumo" class="form-label">ACL Gestão (Resumo)</label>
+                                    <textarea class="form-control" id="acl_gestao_resumo" name="acl_gestao_resumo" rows="3">{{ switch.acl_gestao_resumo or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="telnet_habilitado" name="telnet_habilitado"
+                                               {% if switch.telnet_habilitado %}checked{% endif %}>
+                                        <label class="form-check-label" for="telnet_habilitado">
+                                            Telnet Habilitado
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="dot1x_habilitado" name="dot1x_habilitado"
+                                               {% if switch.dot1x_habilitado %}checked{% endif %}>
+                                        <label class="form-check-label" for="dot1x_habilitado">
+                                            802.1X Habilitado
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="stp_habilitado" name="stp_habilitado"
+                                               {% if switch.stp_habilitado %}checked{% endif %}>
+                                        <label class="form-check-label" for="stp_habilitado">
+                                            STP Habilitado
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="port_security" name="port_security"
+                                               {% if switch.port_security %}checked{% endif %}>
+                                        <label class="form-check-label" for="port_security">
+                                            Port Security
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="ultima_revisao_seg" class="form-label">Última Revisão de Segurança</label>
+                                    <input type="date" class="form-control" id="ultima_revisao_seg" name="ultima_revisao_seg"
+                                           value="{{ switch.ultima_revisao_seg.strftime('%Y-%m-%d') if switch.ultima_revisao_seg else '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba Administrativo -->
+                    <div class="tab-pane fade" id="administrativo" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="fornecedor" class="form-label">Fornecedor</label>
+                                    <input type="text" class="form-control" id="fornecedor" name="fornecedor"
+                                           value="{{ switch.fornecedor or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="numero_nota_fiscal" class="form-label">Nº Nota Fiscal</label>
+                                    <input type="text" class="form-control" id="numero_nota_fiscal" name="numero_nota_fiscal"
+                                           value="{{ switch.numero_nota_fiscal or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="data_aquisicao" class="form-label">Data Aquisição</label>
+                                    <input type="date" class="form-control" id="data_aquisicao" name="data_aquisicao"
+                                           value="{{ switch.data_aquisicao.strftime('%Y-%m-%d') if switch.data_aquisicao else '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="valor_aquisicao" class="form-label">Valor Aquisição (R$)</label>
+                                    <input type="number" step="0.01" class="form-control" id="valor_aquisicao" name="valor_aquisicao"
+                                           value="{{ switch.valor_aquisicao or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="centro_custo" class="form-label">Centro de Custo</label>
+                                    <input type="text" class="form-control" id="centro_custo" name="centro_custo"
+                                           value="{{ switch.centro_custo or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="numero_tombamento" class="form-label">Nº Tombamento</label>
+                                    <input type="text" class="form-control" id="numero_tombamento" name="numero_tombamento"
+                                           value="{{ switch.numero_tombamento or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="projeto_origem" class="form-label">Projeto Origem</label>
+                                    <input type="text" class="form-control" id="projeto_origem" name="projeto_origem"
+                                           value="{{ switch.projeto_origem or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="inicio_garantia" class="form-label">Início Garantia</label>
+                                    <input type="date" class="form-control" id="inicio_garantia" name="inicio_garantia"
+                                           value="{{ switch.inicio_garantia.strftime('%Y-%m-%d') if switch.inicio_garantia else '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="fim_garantia" class="form-label">Fim Garantia</label>
+                                    <input type="date" class="form-control" id="fim_garantia" name="fim_garantia"
+                                           value="{{ switch.fim_garantia.strftime('%Y-%m-%d') if switch.fim_garantia else '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="contrato_suporte" class="form-label">Contrato Suporte</label>
+                                    <input type="text" class="form-control" id="contrato_suporte" name="contrato_suporte"
+                                           value="{{ switch.contrato_suporte or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="sla_fornecedor" class="form-label">SLA Fornecedor</label>
+                                    <input type="text" class="form-control" id="sla_fornecedor" name="sla_fornecedor"
+                                           value="{{ switch.sla_fornecedor or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label for="responsavel_tecnico" class="form-label">Responsável Técnico</label>
+                                    <input type="text" class="form-control" id="responsavel_tecnico" name="responsavel_tecnico"
+                                           value="{{ switch.responsavel_tecnico or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba Controle & Gestão -->
+                    <div class="tab-pane fade" id="controle" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="idade_meses" class="form-label">Idade (Meses)</label>
+                                    <input type="number" class="form-control" id="idade_meses" name="idade_meses" min="0"
+                                           value="{{ switch.idade_meses or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="proximo_upgrade_sugerido" class="form-label">Próximo Upgrade Sugerido</label>
+                                    <input type="date" class="form-control" id="proximo_upgrade_sugerido" name="proximo_upgrade_sugerido"
+                                           value="{{ switch.proximo_upgrade_sugerido.strftime('%Y-%m-%d') if switch.proximo_upgrade_sugerido else '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="proximo_refresh_tecnico" class="form-label">Próximo Refresh Técnico</label>
+                                    <input type="date" class="form-control" id="proximo_refresh_tecnico" name="proximo_refresh_tecnico"
+                                           value="{{ switch.proximo_refresh_tecnico.strftime('%Y-%m-%d') if switch.proximo_refresh_tecnico else '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="observacoes" class="form-label">Observações</label>
+                            <textarea class="form-control" id="observacoes" name="observacoes" rows="4" placeholder="Observações gerais sobre o equipamento...">{{ switch.observacoes or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-save"></i>
+                        </span>
+                        <span class="text">Atualizar Switch</span>
+                    </button>
+                    <a href="{{ url_for('web.view_switch', id=switch.id) }}" class="btn btn-secondary ml-2">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleCustomFabricante() {
+    const fabricante = document.getElementById('fabricante').value;
+    const customDiv = document.getElementById('customFabricante');
+    
+    if (fabricante === 'Outro') {
+        customDiv.style.display = 'block';
+    } else {
+        customDiv.style.display = 'none';
+    }
+}
+
+// Validação do formulário
+document.getElementById('switchForm').addEventListener('submit', function(e) {
+    const idAtivo = document.getElementById('id_ativo').value;
+    if (!/^SW-\d{4}$/.test(idAtivo)) {
+        e.preventDefault();
+        alert('ID Ativo deve estar no formato SW-0001');
+        return false;
+    }
+    
+    // Se selecionou "Outro" no fabricante, usar o valor customizado
+    const fabricante = document.getElementById('fabricante').value;
+    if (fabricante === 'Outro') {
+        const customFabricante = document.getElementById('fabricante_custom').value;
+        if (!customFabricante) {
+            e.preventDefault();
+            alert('Por favor, especifique o fabricante');
+            return false;
+        }
+    }
+});
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    toggleCustomFabricante();
+});
+</script>
+{% endblock %}

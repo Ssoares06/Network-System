@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Network Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">Dashboard - Network Management System</h1>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Switches</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_switches }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-network-wired fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Switches Ativos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ switches_ativos }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Alta Criticidade</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ switches_alta_criticidade }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Garantia Próxima</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ switches_garantia_proxima }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-white">
+                    <h6 class="m-0 font-weight-bold text-primary">Distribuição por Fabricante</h6>
+                </div>
+                <div class="card-body bg-white">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="fabricanteChart" style="background: white;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-white">
+                    <h6 class="m-0 font-weight-bold text-primary">Switches por Status</h6>
+                </div>
+                <div class="card-body bg-white">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="statusChart" style="background: white;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Ações Rápidas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('web.add_switch') }}" class="btn btn-primary btn-block">
+                                <i class="fas fa-plus"></i> Novo Switch
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('web.switches') }}" class="btn btn-success btn-block">
+                                <i class="fas fa-list"></i> Listar Switches
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('web.import_switches') }}" class="btn btn-warning btn-block">
+                                <i class="fas fa-file-import"></i> Importar Excel
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('web.data_dictionary') }}" class="btn btn-info btn-block">
+                                <i class="fas fa-book"></i> Dicionário de Dados
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de Fabricantes - Fundo Branco
+var ctxFabricante = document.getElementById("fabricanteChart").getContext('2d');
+var fabricanteChart = new Chart(ctxFabricante, {
+    type: 'doughnut',
+    data: {
+        labels: [{% for fabricante, count in fabricantes %}'{{ fabricante }}',{% endfor %}],
+        datasets: [{
+            data: [{% for fabricante, count in fabricantes %}{{ count }},{% endfor %}],
+            backgroundColor: ['#dc3545', '#e4606d', '#e9838d', '#eea5ab', '#f4c8ca'],
+            borderColor: '#ffffff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        cutoutPercentage: 60,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 20,
+                    usePointStyle: true
+                }
+            }
+        }
+    },
+});
+
+// Gráfico de Status - Fundo Branco
+var ctxStatus = document.getElementById("statusChart").getContext('2d');
+var statusChart = new Chart(ctxStatus, {
+    type: 'pie',
+    data: {
+        labels: [{% for status, count in status_distribution %}'{{ status }}',{% endfor %}],
+        datasets: [{
+            data: [{% for status, count in status_distribution %}{{ count }},{% endfor %}],
+            backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d'],
+            borderColor: '#ffffff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 20,
+                    usePointStyle: true
+                }
+            }
+        }
+    },
+});
+</script>
+{% endblock %}

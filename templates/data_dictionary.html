@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Dicionário de Dados - Network Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dicionário de Dados</h1>
+        <div>
+            <button onclick="initDictionary()" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-sync"></i>
+                </span>
+                <span class="text">Inicializar Dicionário</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-primary text-white">
+            <h6 class="m-0 font-weight-bold">Campos da Tabela Switches</h6>
+        </div>
+        <div class="card-body">
+            {% for category, items in categories.items() %}
+            <div class="mb-5">
+                <h4 class="text-primary mb-3" style="color: #dc3545 !important;">{{ category }}</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-light" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white;">
+                            <tr>
+                                <th>Campo</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Obrigatório</th>
+                                <th>Exemplo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td><strong style="color: #dc3545;">{{ item.column_name }}</strong></td>
+                                <td>
+                                    <span class="badge badge-info" style="background: #17a2b8; color: white;">{{ item.data_type or 'N/A' }}</span>
+                                    {% if item.max_length %}
+                                    <small class="text-muted">({{ item.max_length }})</small>
+                                    {% endif %}
+                                </td>
+                                <td style="color: #495057;">{{ item.description }}</td>
+                                <td>
+                                    {% if item.required %}
+                                    <span class="badge badge-success" style="background: #28a745; color: white;">Sim</span>
+                                    {% else %}
+                                    <span class="badge badge-secondary" style="background: #6c757d; color: white;">Não</span>
+                                    {% endif %}
+                                </td>
+                                <td><code style="color: #e83e8c; background: #f8f9fa; padding: 0.2rem 0.4rem; border-radius: 0.25rem;">{{ item.example or 'N/A' }}</code></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% if not categories %}
+            <div class="text-center py-4">
+                <i class="fas fa-book fa-3x text-gray-300 mb-3"></i>
+                <h5 class="text-gray-800">Dicionário de dados não inicializado</h5>
+                <p class="text-muted">Clique em "Inicializar Dicionário" para carregar as definições dos campos.</p>
+                <button onclick="initDictionary()" class="btn btn-primary">
+                    <i class="fas fa-sync"></i> Inicializar Dicionário
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function initDictionary() {
+    if (confirm('Deseja inicializar o dicionário de dados? Isso irá recriar todas as definições.')) {
+        fetch('/api/init-dictionary', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Dicionário inicializado com sucesso!');
+                location.reload();
+            } else {
+                alert('Erro: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Erro: ' + error);
+        });
+    }
+}
+</script>
+{% endblock %}
