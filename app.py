@@ -9,6 +9,7 @@ login_manager = LoginManager()
 migrate = Migrate()
 
 def create_app():
+    print("hi")
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///network.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
